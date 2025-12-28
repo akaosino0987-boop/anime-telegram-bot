@@ -1,45 +1,31 @@
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
-import os
-
-TOKEN = os.getenv("BOT_TOKEN")
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ContextTypes
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [
+        [InlineKeyboardButton("🔥 Anime Updates", callback_data="anime")],
+        [InlineKeyboardButton("🏴‍☠️ One Piece", callback_data="onepiece")],
+        [InlineKeyboardButton("📰 Anime News", callback_data="news")]
+    ]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
     await update.message.reply_text(
-        "🎌 Welcome to Anime Updates Bot!\n\n"
-        "Commands:\n"
-        "/anime - Latest anime updates\n"
-        "/onepiece - One Piece updates\n"
-        "/news - Anime news"
+        "🎌 Welcome to Anime Updates Bot!\nChoose an option below:",
+        reply_markup=reply_markup
     )
 
-async def anime(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🔥 Latest Anime Updates:\n"
-        "- New episodes coming soon!\n"
-        "- Stay tuned 🎉"
-    )
+-- Button Handler --
 
-async def onepiece(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🏴‍☠️ One Piece Update:\n"
-        "New episode info will be posted here!"
-    )
+from telegram.ext import CallbackQueryHandler
 
-async def news(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "📰 Anime News:\n"
-        "- New seasons announced\n"
-        "- Upcoming anime releases"
-    )
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
 
-if __name__ == "__main__":
-    app = ApplicationBuilder().token(TOKEN).build()
-
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("anime", anime))
-    app.add_handler(CommandHandler("onepiece", onepiece))
-    app.add_handler(CommandHandler("news", news))
-
-    print("Bot is running...")
-    app.run_polling()
+    if query.data == "anime":
+        await query.edit_message_text("🔥 Latest Anime updates coming soon!")
+    elif query.data == "onepiece":
+        await query.edit_message_text("🏴‍☠️ One Piece latest episode updates coming soon!")
+    elif query.data == "news":
+        await query.edit_message_text("📰 Latest anime news will be posted here!")
