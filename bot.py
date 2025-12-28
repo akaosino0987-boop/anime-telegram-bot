@@ -1,3 +1,4 @@
+import os
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
     ApplicationBuilder,
@@ -6,8 +7,8 @@ from telegram.ext import (
     ContextTypes,
 )
 
-#CHANNEL_USERNAME = 
-"@newanimedaily"
+TOKEN = os.getenv("BOT_TOKEN")
+CHANNEL_USERNAME = "@newanimedaily"
 
 # -------- Button handler --------
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -35,8 +36,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
--- Auto Post Function 
-
+# -------- Auto Post Function --------
 async def auto_post(context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=CHANNEL_USERNAME,
@@ -44,8 +44,8 @@ async def auto_post(context: ContextTypes.DEFAULT_TYPE):
     )
 
 # -------- Main --------
-app = ApplicationBuilder().token("YOUR_BOT_TOKEN").build(
-)
+app = ApplicationBuilder().token(TOKEN).build()
+
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button_handler))
 
@@ -53,5 +53,3 @@ job_queue = app.job_queue
 job_queue.run_repeating(auto_post, interval=21600, first=10)
 
 app.run_polling()
-
-
