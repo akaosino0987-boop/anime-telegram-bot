@@ -6,6 +6,9 @@ from telegram.ext import (
     ContextTypes,
 )
 
+#CHANNEL_USERNAME = 
+"@newanimedaily"
+
 # -------- Button handler --------
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -32,10 +35,23 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
-# -------- Main --------
-app = ApplicationBuilder().token("YOUR_BOT_TOKEN").build()
+-- Auto Post Function 
 
+async def auto_post(context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_message(
+        chat_id=CHANNEL_USERNAME,
+        text="🔥 New Anime Update!\nStay tuned for latest episodes 🎌"
+    )
+
+# -------- Main --------
+app = ApplicationBuilder().token("YOUR_BOT_TOKEN").build(
+)
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button_handler))
 
+job_queue = app.job_queue
+job_queue.run_repeating(auto_post, interval=21600, first=10)
+
 app.run_polling()
+
+
